@@ -36,6 +36,7 @@ window.coordinatorApp=()=>`<div class="shell student-shell coord-red">${coordNav
 function refreshCoord(){A.innerHTML=coordinatorApp();bindCoordinator();bindAccessLookup();scrollTo(0,0)}
 window.bindCoordinator=()=>{
  bindBookingDatePickers();
+ bindBookingAvailability(document.querySelector("#coordBookingForm"),coordState.bookings);
  document.querySelectorAll(".coord-nav,.coord-go").forEach(x=>x.onclick=e=>{e.preventDefault();coordState.view=x.dataset.view;refreshCoord()});
  const filter=document.querySelector("#studentFilter");if(filter)filter.oninput=()=>document.querySelectorAll("#studentRows tr").forEach(r=>r.hidden=!r.dataset.search.includes(filter.value.toLowerCase()));
  document.querySelectorAll(".decide-approval").forEach(x=>x.onclick=()=>{const p=coordState.pending.find(y=>y.id==x.dataset.id);coordState.pending=coordState.pending.filter(y=>y.id!=x.dataset.id);coordStore.set("pending",coordState.pending);refreshCoord();notify(`${p.name}: cadastro ${x.dataset.action==="approved"?"aprovado":"recusado"}.`)});
