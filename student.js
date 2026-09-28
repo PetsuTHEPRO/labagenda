@@ -22,7 +22,10 @@ window.bindBookingAvailability=(form,bookings=[])=>{
   if(!area||!date)return;
   let anchor=null,board=area.querySelector(".availability-board");
   start.min="07:00";start.max="21:00";end.min="08:00";end.max="22:00";
-  if(!board){board=document.createElement("div");board.className="availability-board";area.prepend(board);const label=document.createElement("div");label.className="time-fields-label";label.textContent="OU AJUSTE O INTERVALO MANUALMENTE";board.insertAdjacentElement("afterend",label)}
+  if(!board){board=document.createElement("div");board.className="availability-board";area.prepend(board)}
+  const manualFields=start.closest(".row");if(manualFields)manualFields.classList.add("d-none");
+  start.required=false;end.required=false;
+  form.addEventListener("submit",e=>{if(start.value&&end.value)return;e.preventDefault();e.stopImmediatePropagation();const error=form.querySelector('[id$="BookingError"],#bookingError');if(error)error.textContent="Selecione o primeiro e o último bloco do agendamento."},true);
   const interval=(a,b)=>({lo:Math.min(a,b),hi:Math.max(a,b)+1});
   const hasConflict=(lo,hi,day)=>day.some(b=>`${String(lo).padStart(2,"0")}:00`<b.end&&`${String(hi).padStart(2,"0")}:00`>b.start);
   const preview=(hour,day)=>{if(anchor===null)return;const {lo,hi}=interval(anchor,hour),invalid=hasConflict(lo,hi,day);board.querySelectorAll(".time-slot").forEach(slot=>{slot.classList.remove("preview-valid","preview-invalid");const h=Number(slot.dataset.hour);if(h>=lo&&h<hi)slot.classList.add(invalid?"preview-invalid":"preview-valid")})};
